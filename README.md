@@ -23,18 +23,30 @@ npm run dev
 | `src/data/services.ts` | Список услуг |
 | `src/data/cases.ts` | Кейсы портфолио |
 
-## Заявки
+## Заявки — как подключить приём (Formspree)
 
 Форма (`src/components/features/ContactForm.tsx`) отправляет POST-запрос на
-адрес из `VITE_LEAD_WEBHOOK_URL` (n8n webhook или Formspree endpoint) и
-дублирует заявку в `localStorage` браузера клиента.
+адрес из `VITE_LEAD_WEBHOOK_URL` и дублирует заявку в `localStorage` браузера
+клиента. Пока переменная не задана — заявки видно только локально, до
+владельца они не доходят.
 
-Для GitHub Pages адрес прописывается как секрет репозитория
-`LEAD_WEBHOOK_URL` (Settings → Secrets and variables → Actions) — workflow
-подставляет его при сборке. Для локальной разработки — переменная в `.env`
-(см. `.env.example`).
+Самый простой рабочий вариант — [Formspree](https://formspree.io) (бесплатный
+тариф хватает с запасом):
 
-Если `VITE_LEAD_WEBHOOK_URL` не задан, заявки сохраняются только локально.
+1. Зарегистрироваться на formspree.io, подтвердить почту.
+2. Создать новую форму (New Form) — Formspree выдаст endpoint вида
+   `https://formspree.io/f/xxxxxxxx`.
+3. Добавить его как секрет репозитория: **Settings → Secrets and variables →
+   Actions → New repository secret**, имя `LEAD_WEBHOOK_URL`, значение —
+   этот endpoint.
+4. Перезапустить деплой (**Actions → Deploy to GitHub Pages → Run workflow**,
+   либо просто запушить любой коммит) — сборка подставит секрет в бандл.
+
+После этого заявки будут приходить на почту, привязанную к аккаунту
+Formspree, и видны в его личном кабинете (там же история всех заявок).
+
+Для локальной разработки тот же endpoint кладётся в `.env` как
+`VITE_LEAD_WEBHOOK_URL` (см. `.env.example`).
 
 ## Личный кабинет `/dashboard`
 
