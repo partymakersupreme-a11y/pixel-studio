@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pixel Studio</title>
+    <script>
+      // SPA-редирект для GitHub Pages: прямой переход на /login или /dashboard
+      // отдаёт 404 от GH Pages (там нет файлов по этим путям), этот скрипт
+      // сохраняет путь в query и уводит на index.html, где React Router
+      // возвращает исходный маршрут.
+      var base = "/pixel-studio";
+      var path = location.pathname.slice(base.length) || "/";
+      location.replace(
+        base + "/?redirect=" + encodeURIComponent(path + location.search + location.hash)
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

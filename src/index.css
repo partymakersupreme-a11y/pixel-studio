@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand palette — тёмная тема по умолчанию */
+    --ink: 232 22% 7%;
+    --surface: 232 20% 10%;
+    --elevated: 232 18% 14%;
+    --line: 232 14% 22%;
+    --brand-violet: 258 90% 66%;
+    --brand-cyan: 190 95% 55%;
+
+    /* shadcn tokens */
+    --background: 232 22% 7%;
+    --foreground: 220 20% 96%;
+    --card: 232 20% 10%;
+    --card-foreground: 220 20% 96%;
+    --popover: 232 20% 10%;
+    --popover-foreground: 220 20% 96%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 232 18% 16%;
+    --secondary-foreground: 220 20% 96%;
+    --muted: 232 16% 18%;
+    --muted-foreground: 225 10% 62%;
+    --accent: 190 95% 55%;
+    --accent-foreground: 232 22% 7%;
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 232 14% 22%;
+    --input: 232 14% 22%;
+    --ring: 258 90% 66%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter", system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: hsl(var(--brand-violet) / 0.35);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--ink));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--line));
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--brand-violet) / 0.5);
+  }
+}
+
+@layer components {
+  /* Заголовки витрины */
+  .font-display {
+    font-family: "Space Grotesk", "Inter", sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  .label-uppercase {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.65rem;
+    font-weight: 500;
+  }
+
+  /* Градиентный текст акцента */
+  .text-gradient {
+    background: linear-gradient(
+      100deg,
+      hsl(var(--brand-violet)) 0%,
+      hsl(var(--brand-cyan)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Карточка со стеклянной подложкой */
+  .glass-card {
+    background: linear-gradient(
+      160deg,
+      hsl(var(--elevated) / 0.9) 0%,
+      hsl(var(--surface) / 0.85) 100%
+    );
+    border: 1px solid hsl(var(--line) / 0.8);
+    backdrop-filter: blur(12px);
+  }
+
+  .glass-card-hover {
+    transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .glass-card-hover:hover {
+    border-color: hsl(var(--brand-violet) / 0.55);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 50px -22px hsl(var(--brand-violet) / 0.5);
+  }
+
+  /* Тонкая линия-акцент */
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--brand-violet)) 0%,
+      hsl(var(--brand-cyan)) 60%,
+      transparent 100%
+    );
+  }
+
+  /* Фоновая сетка героя */
+  .grid-backdrop {
+    background-image: linear-gradient(hsl(var(--line) / 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--line) / 0.35) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      #000 30%,
+      transparent 75%
+    );
+  }
+
+  /* Пункт бокового меню кабинета */
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-light transition-colors;
+    color: hsl(var(--muted-foreground));
+  }
+  .sidebar-nav-item:hover {
+    background: hsl(var(--elevated));
+    color: hsl(var(--foreground));
+  }
+  .sidebar-nav-item.active {
+    background: hsl(var(--brand-violet) / 0.14);
+    color: hsl(var(--foreground));
+  }
+}
