@@ -8,6 +8,7 @@ import {
   Workflow,
   type LucideIcon,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import Reveal from "@/components/features/Reveal";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,14 +25,16 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export default function ServicesSection() {
+  const { t } = useTranslation();
+
   return (
     <section id="services" className="scroll-mt-24 py-24 lg:py-32">
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <Reveal>
-          <div className="label-uppercase text-primary">Услуги</div>
+          <div className="label-uppercase text-primary">{t("services.label")}</div>
           <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-            Что можно поручить мне
-            <span className="text-gradient"> и забыть</span>
+            {t("services.heading")}
+            <span className="text-gradient">{t("services.headingGradient")}</span>
           </h2>
           <div className="hairline mt-6 w-16" />
         </Reveal>
@@ -39,6 +42,9 @@ export default function ServicesSection() {
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => {
             const Icon = iconMap[service.icon] ?? Sparkles;
+            const bullets = t(`services.items.${service.id}.bullets`, {
+              returnObjects: true,
+            }) as string[];
             return (
               <Reveal key={service.id} delay={i * 0.07}>
                 <Card className="glass-card-hover h-full">
@@ -48,15 +54,15 @@ export default function ServicesSection() {
                     </div>
 
                     <h3 className="font-display text-lg font-medium leading-snug">
-                      {service.title}
+                      {t(`services.items.${service.id}.title`)}
                     </h3>
 
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      {service.pitch}
+                      {t(`services.items.${service.id}.pitch`)}
                     </p>
 
                     <ul className="mt-6 space-y-2.5 border-t border-border/60 pt-5">
-                      {service.bullets.map((bullet) => (
+                      {bullets.map((bullet) => (
                         <li
                           key={bullet}
                           className="flex items-start gap-2.5 text-sm text-muted-foreground"

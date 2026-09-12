@@ -1,7 +1,11 @@
+import { useTranslation } from "react-i18next";
+
 import Reveal from "@/components/features/Reveal";
 import { processSteps } from "@/data/services";
 
 export default function ProcessSection() {
+  const { t } = useTranslation();
+
   return (
     <section
       id="process"
@@ -9,9 +13,9 @@ export default function ProcessSection() {
     >
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <Reveal>
-          <div className="label-uppercase text-accent">Как работаем</div>
+          <div className="label-uppercase text-accent">{t("process.label")}</div>
           <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-            От разговора до запуска — четыре шага
+            {t("process.heading")}
           </h2>
           <div className="hairline mt-6 w-16" />
         </Reveal>
@@ -37,13 +41,13 @@ export default function ProcessSection() {
                 </div>
 
                 <h3 className="mt-6 font-display text-lg font-medium">
-                  {step.title}
+                  {t(`process.items.${step.step}.title`)}
                 </h3>
                 <div className="label-uppercase mt-2 text-[0.55rem] text-muted-foreground">
-                  {step.duration}
+                  {t(`process.items.${step.step}.duration`)}
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  {step.description}
+                  {t(`process.items.${step.step}.description`)}
                 </p>
               </div>
             </Reveal>

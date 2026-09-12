@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import Reveal from "@/components/features/Reveal";
 import { Button } from "@/components/ui/button";
@@ -13,17 +14,20 @@ import { saveLead } from "@/lib/leads";
 type FormState = "idle" | "sending" | "success";
 
 export default function ContactForm() {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [task, setTask] = useState("");
   const [state, setState] = useState<FormState>("idle");
   const [error, setError] = useState("");
 
+  const bullets = t("contact.bullets", { returnObjects: true }) as string[];
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!name.trim() || !contact.trim() || !task.trim()) {
-      setError("Заполните все три поля — так я сразу пойму, о чём речь.");
+      setError(t("contact.errorRequired"));
       return;
     }
 
@@ -68,23 +72,18 @@ export default function ContactForm() {
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
-            <div className="label-uppercase text-primary">Заявка</div>
+            <div className="label-uppercase text-primary">{t("contact.label")}</div>
             <h2 className="mt-4 font-display text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-              Расскажите, что
-              <span className="text-gradient"> отнимает время</span>
+              {t("contact.heading1")}
+              <span className="text-gradient">{t("contact.headingGradient")}</span>
             </h2>
             <div className="hairline mt-6 w-16" />
             <p className="mt-8 max-w-md text-base leading-relaxed text-muted-foreground">
-              Опишите задачу своими словами — без технических терминов. Отвечу в
-              течение дня и честно скажу, стоит ли это делать и сколько займёт.
+              {t("contact.description")}
             </p>
 
             <ul className="mt-8 space-y-3">
-              {[
-                "Первый разговор — бесплатно",
-                "Фиксированная цена до начала работ",
-                "Мелкие правки после запуска без счёта",
-              ].map((item) => (
+              {bullets.map((item) => (
                 <li
                   key={item}
                   className="flex items-center gap-3 text-sm text-muted-foreground"
@@ -110,11 +109,10 @@ export default function ContactForm() {
                       <CheckCircle2 size={26} className="text-emerald-400" />
                     </div>
                     <h3 className="mt-6 font-display text-xl font-medium">
-                      Заявка принята
+                      {t("contact.successTitle")}
                     </h3>
                     <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-                      Свяжусь с вами в течение дня. Если вопрос срочный —
-                      напишите в Telegram, там отвечаю быстрее.
+                      {t("contact.successBody")}
                     </p>
                     <Button
                       variant="outline"
@@ -122,41 +120,41 @@ export default function ContactForm() {
                       className="mt-8"
                       onClick={() => setState("idle")}
                     >
-                      Отправить ещё одну
+                      {t("contact.sendAnother")}
                     </Button>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                     <div className="space-y-2">
-                      <Label htmlFor="lead-name">Как вас зовут</Label>
+                      <Label htmlFor="lead-name">{t("contact.nameLabel")}</Label>
                       <Input
                         id="lead-name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Павел"
+                        placeholder={t("contact.namePlaceholder")}
                         autoComplete="name"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="lead-contact">
-                        Telegram, почта или телефон
+                        {t("contact.contactLabel")}
                       </Label>
                       <Input
                         id="lead-contact"
                         value={contact}
                         onChange={(e) => setContact(e.target.value)}
-                        placeholder="@username или mail@example.com"
+                        placeholder={t("contact.contactPlaceholder")}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="lead-task">Что нужно сделать</Label>
+                      <Label htmlFor="lead-task">{t("contact.taskLabel")}</Label>
                       <Textarea
                         id="lead-task"
                         value={task}
                         onChange={(e) => setTask(e.target.value)}
-                        placeholder="Например: заявки приходят в почту и Telegram, теряются. Хочу, чтобы всё падало в одну таблицу и приходило уведомление."
+                        placeholder={t("contact.taskPlaceholder")}
                       />
                     </div>
 
@@ -174,18 +172,18 @@ export default function ContactForm() {
                       {state === "sending" ? (
                         <>
                           <Loader2 size={17} className="animate-spin" />
-                          Отправляю…
+                          {t("contact.sending")}
                         </>
                       ) : (
                         <>
-                          Отправить заявку
+                          {t("contact.submit")}
                           <ArrowRight size={17} />
                         </>
                       )}
                     </Button>
 
                     <p className="text-center text-xs text-muted-foreground">
-                      Никакого спама и передачи контактов третьим лицам.
+                      {t("contact.privacyNote")}
                     </p>
                   </form>
                 )}

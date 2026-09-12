@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Bot, Workflow, Store } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 
-const highlights = [
-  { icon: Workflow, label: "n8n-воркфлоу" },
-  { icon: Bot, label: "Telegram-боты" },
-  { icon: Store, label: "Shopify и сайты" },
-];
+const highlightIcons = [Workflow, Bot, Store];
 
 export default function Hero() {
+  const { t } = useTranslation();
+  const highlights = t("hero.highlights", { returnObjects: true }) as string[];
+
   const scrollToContact = () =>
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
 
@@ -41,22 +41,20 @@ export default function Hero() {
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/60 px-4 py-1.5 backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
             <span className="label-uppercase text-[0.6rem] text-muted-foreground">
-              Версилия, Италия — беру проекты
+              {t("hero.badge")}
             </span>
           </div>
 
           <h1 className="font-display text-[2.6rem] font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
-            Делаю так, чтобы
+            {t("hero.title1")}
             <br />
-            рутина работала
+            {t("hero.title2")}
             <br />
-            <span className="text-gradient">без вас</span>
+            <span className="text-gradient">{t("hero.titleGradient")}</span>
           </h1>
 
           <p className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Автоматизирую заявки, счета и отчёты, собираю сайты и Telegram-ботов,
-            связываю магазин со складом и CRM. Вы занимаетесь делом — система
-            делает остальное.
+            {t("hero.description")}
           </p>
 
           <motion.div
@@ -67,34 +65,37 @@ export default function Hero() {
           >
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <Button variant="gradient" size="lg" onClick={scrollToContact}>
-                Обсудить проект
+                {t("hero.ctaPrimary")}
                 <ArrowRight size={18} />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <Button variant="outline" size="lg" onClick={scrollToCases}>
-                Посмотреть кейсы
+                {t("hero.ctaSecondary")}
               </Button>
             </motion.div>
           </motion.div>
 
           <div className="mt-14 flex flex-wrap gap-x-8 gap-y-4">
-            {highlights.map(({ icon: Icon, label }, i) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.4 + i * 0.1,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="flex items-center gap-2.5 text-sm text-muted-foreground"
-              >
-                <Icon size={16} className="text-primary" />
-                {label}
-              </motion.div>
-            ))}
+            {highlights.map((label, i) => {
+              const Icon = highlightIcons[i] ?? Workflow;
+              return (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.4 + i * 0.1,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="flex items-center gap-2.5 text-sm text-muted-foreground"
+                >
+                  <Icon size={16} className="text-primary" />
+                  {label}
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

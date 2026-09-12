@@ -1,16 +1,9 @@
-/** Кейс портфолио. Данные лежат в src/data/cases.ts */
+/** Кейс портфолио. Данные лежат в src/data/cases.ts, тексты — в src/i18n/locales/*. */
 export interface CaseItem {
   id: string;
-  title: string;
   client: string;
   category: CaseCategory;
   year: number;
-  /** Короткое описание задачи клиента */
-  problem: string;
-  /** Что было сделано */
-  solution: string;
-  /** Измеримый результат — одна строка */
-  result: string;
   /** Технологии, показываются чипами */
   stack: string[];
   /** Ссылка на живой проект, если есть */
@@ -18,29 +11,22 @@ export interface CaseItem {
 }
 
 export type CaseCategory =
-  | "Сайт"
-  | "Интернет-магазин"
-  | "Автоматизация"
-  | "Telegram-бот"
-  | "Интеграции";
+  | "website"
+  | "shop"
+  | "automation"
+  | "bot"
+  | "integrations";
 
-/** Услуга на витрине */
+/** Услуга на витрине. Тексты — в src/i18n/locales/*, ключ services.items.<id>. */
 export interface ServiceItem {
   id: string;
-  title: string;
   /** Иконка lucide-react */
   icon: string;
-  /** Польза для клиента, а не описание технологии */
-  pitch: string;
-  bullets: string[];
 }
 
-/** Шаг процесса работы */
+/** Шаг процесса работы. Тексты — в src/i18n/locales/*, ключ process.items.<step>. */
 export interface ProcessStep {
   step: number;
-  title: string;
-  description: string;
-  duration: string;
 }
 
 /** Заявка с формы. Пока хранится в localStorage. */

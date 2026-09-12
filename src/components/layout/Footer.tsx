@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Send } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { services } from "@/data/services";
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-border/60 bg-surface/40">
       <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
@@ -12,19 +15,18 @@ export default function Footer() {
             <div className="font-display text-xl font-semibold">Pixel Studio</div>
             <div className="hairline mt-4 w-14" />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Павел — автоматизация бизнес-процессов, сайты и Telegram-боты.
-              Работаю из Версилии, проекты — по всей Италии и удалённо.
+              {t("footer.tagline")}
             </p>
           </div>
 
           <div>
             <div className="label-uppercase mb-5 text-muted-foreground">
-              Услуги
+              {t("footer.servicesLabel")}
             </div>
             <ul className="space-y-3">
               {services.slice(0, 5).map((service) => (
                 <li key={service.id} className="text-sm text-muted-foreground">
-                  {service.title}
+                  {t(`services.items.${service.id}.title`)}
                 </li>
               ))}
             </ul>
@@ -32,13 +34,13 @@ export default function Footer() {
 
           <div>
             <div className="label-uppercase mb-5 text-muted-foreground">
-              Контакты
+              {t("footer.contactsLabel")}
             </div>
             {/* TODO(владелец): подставить свои реальные контакты */}
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2.5">
                 <MapPin size={14} className="shrink-0 text-primary" />
-                Версилия, Италия
+                {t("footer.address")}
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={14} className="shrink-0 text-primary" />
@@ -60,7 +62,7 @@ export default function Footer() {
             to="/login"
             className="text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            Личный кабинет
+            {t("footer.cabinet")}
           </Link>
         </div>
       </div>
