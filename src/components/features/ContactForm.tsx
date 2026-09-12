@@ -33,24 +33,29 @@ export default function ContactForm() {
     const webhookUrl = import.meta.env.VITE_LEAD_WEBHOOK_URL as
       | string
       | undefined;
+    const formspreeUrl = import.meta.env.VITE_LEAD_FORMSPREE_URL as
+      | string
+      | undefined;
 
-    if (webhookUrl) {
-      try {
-        await fetch(webhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ name, contact, task }),
-        });
-      } catch {
-        // Заявка всё равно сохранится локально ниже — не блокируем клиента
-        // из-за сетевой ошибки, но стоит проверить VITE_LEAD_WEBHOOK_URL.
-      }
-    }
+    // Уведомления — лучшее усилие, не блокируют сохранение заявки ниже.
+    const notify = (endpoint: string) =>
+      fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ name, contact, task }),
+      }).catch(() => {
+        // Заявка всё равно сохранится ниже — не блокируем клиента из-за
+        // сетевой ошибки, но стоит проверить адрес вебхука/Formspree.
+      });
 
-    saveLead({ name, contact, task });
+    await Promise.all(
+      [webhookUrl, formspreeUrl].filter(Boolean).map((url) => notify(url as string))
+    );
+
+    await saveLead({ name, contact, task });
 
     setState("success");
     setName("");

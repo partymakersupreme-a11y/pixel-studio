@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-
-const navLinks = [
-  { label: "Услуги", href: "#services" },
-  { label: "Как работаем", href: "#process" },
-  { label: "Кейсы", href: "#cases" },
-  { label: "Контакты", href: "#contact" },
-];
+import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 
 export default function Header() {
+  const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const navLinks = [
+    { label: t("nav.services"), href: "#services" },
+    { label: t("nav.process"), href: "#process" },
+    { label: t("nav.cases"), href: "#cases" },
+    { label: t("nav.contact"), href: "#contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -52,7 +55,7 @@ export default function Header() {
               Pixel Studio
             </span>
             <span className="label-uppercase mt-1 text-[0.55rem] text-muted-foreground">
-              Автоматизация и сайты
+              {t("header.tagline")}
             </span>
           </Link>
 
@@ -77,24 +80,28 @@ export default function Header() {
               to="/login"
               className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-              Кабинет
+              {t("nav.cabinetShort")}
             </Link>
             <Button
               variant="gradient"
               size="sm"
               onClick={() => goToSection("#contact")}
             >
-              Обсудить проект
+              {t("header.ctaPrimary")}
             </Button>
+            <LanguageSwitcher />
           </div>
 
-          <button
-            className="p-2 text-foreground md:hidden"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label="Меню"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
+            <button
+              className="p-2 text-foreground"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={t("header.menuLabel")}
+            >
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -109,7 +116,7 @@ export default function Header() {
         <button
           className="absolute right-6 top-5 p-2"
           onClick={() => setMenuOpen(false)}
-          aria-label="Закрыть"
+          aria-label={t("header.closeLabel")}
         >
           <X size={22} />
         </button>
@@ -132,7 +139,7 @@ export default function Header() {
           className="text-sm text-muted-foreground"
           onClick={() => setMenuOpen(false)}
         >
-          Личный кабинет
+          {t("nav.cabinetFull")}
         </Link>
       </div>
     </>

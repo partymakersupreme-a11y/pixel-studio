@@ -1,15 +1,37 @@
+import { isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import type { Lead, LeadStatus } from "@/types";
 
 const STORAGE_KEY = "sozdatel_leads";
+const TABLE = "leads";
 
 /**
- * Хранилище заявок на время, пока нет бэкенда.
- * Всё лежит в localStorage браузера: заявка, отправленная с телефона клиента,
- * в вашем кабинете НЕ появится. Это витрина логики, а не рабочий приём заявок.
- * Как подключить настоящую отправку — см. TODO в ContactForm.tsx и README.
+ * Приём и хранение заявок.
+ *
+ * Если заданы VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY — заявки уходят в
+ * Supabase и видны в /dashboard с любого устройства. Без них — старый режим:
+ * всё лежит в localStorage браузера клиента и в кабинете НЕ появляется.
+ * Настройка Supabase — см. README, раздел «Заявки».
  */
 
-export function getLeads(): Lead[] {
+function mapRow(row: {
+  id: string;
+  name: string;
+  contact: string;
+  task: string;
+  created_at: string;
+  status: LeadStatus;
+}): Lead {
+  return {
+    id: row.id,
+    name: row.name,
+    contact: row.contact,
+    task: row.task,
+    createdAt: row.created_at,
+    status: row.status,
+  };
+}
+
+function getLocalLeads(): Lead[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -20,7 +42,7 @@ export function getLeads(): Lead[] {
   }
 }
 
-export function saveLead(input: Pick<Lead, "name" | "contact" | "task">): Lead {
+function saveLocalLead(input: Pick<Lead, "name" | "contact" | "task">): Lead {
   const lead: Lead = {
     id: `lead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: input.name.trim(),
@@ -30,15 +52,65 @@ export function saveLead(input: Pick<Lead, "name" | "contact" | "task">): Lead {
     status: "new",
   };
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([lead, ...getLeads()]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([lead, ...getLocalLeads()]));
   } catch {
     /* приватный режим или переполнение — заявку не теряем, просто не храним */
   }
   return lead;
 }
 
-export function updateLeadStatus(id: string, status: LeadStatus): Lead[] {
-  const next = getLeads().map((lead) =>
+/** Достаёт заявки: из Supabase, если настроен, иначе из localStorage. */
+export async function getLeads(): Promise<Lead[]> {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("Не удалось получить заявки из Supabase:", error.message);
+      return [];
+    }
+    return (data ?? []).map(mapRow);
+  }
+  return getLocalLeads();
+}
+
+/** Сохраняет заявку с формы. В Supabase-режиме дублирует в localStorage не нужно. */
+export async function saveLead(
+  input: Pick<Lead, "name" | "contact" | "task">
+): Promise<Lead | null> {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .insert({
+        name: input.name.trim(),
+        contact: input.contact.trim(),
+        task: input.task.trim(),
+        status: "new",
+      })
+      .select()
+      .single();
+    if (error) {
+      console.error("Не удалось сохранить заявку в Supabase:", error.message);
+      return null;
+    }
+    return mapRow(data);
+  }
+  return saveLocalLead(input);
+}
+
+export async function updateLeadStatus(
+  id: string,
+  status: LeadStatus
+): Promise<Lead[]> {
+  if (supabase) {
+    const { error } = await supabase.from(TABLE).update({ status }).eq("id", id);
+    if (error) {
+      console.error("Не удалось обновить статус заявки:", error.message);
+    }
+    return getLeads();
+  }
+  const next = getLocalLeads().map((lead) =>
     lead.id === id ? { ...lead, status } : lead
   );
   try {
@@ -49,8 +121,15 @@ export function updateLeadStatus(id: string, status: LeadStatus): Lead[] {
   return next;
 }
 
-export function deleteLead(id: string): Lead[] {
-  const next = getLeads().filter((lead) => lead.id !== id);
+export async function deleteLead(id: string): Promise<Lead[]> {
+  if (supabase) {
+    const { error } = await supabase.from(TABLE).delete().eq("id", id);
+    if (error) {
+      console.error("Не удалось удалить заявку:", error.message);
+    }
+    return getLeads();
+  }
+  const next = getLocalLeads().filter((lead) => lead.id !== id);
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
@@ -94,3 +173,5 @@ export function formatLeadDate(iso: string): string {
     minute: "2-digit",
   });
 }
+
+export { isSupabaseConfigured };

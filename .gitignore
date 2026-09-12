@@ -25,3 +25,4 @@ dist-ssr
 # Секреты: .env.local выше не ловит бэкапы вроде .env.production
 .env.*
 !.env.example
+.site-deploy/
